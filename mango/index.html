@@ -181,8 +181,23 @@
     display: none;
     flex-direction: column;
     gap: 1rem;
-    min-width: 200px;
+    min-width: 220px;
     z-index: 99;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  #settings-panel.show {
+    display: flex;
+    animation: slideIn 0.3s ease forwards;
+  }
+
+  @keyframes slideIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .setting-item {
@@ -194,27 +209,123 @@
 
   .setting-item label {
     font-size: 0.9rem;
+    cursor: pointer;
   }
 
-  select {
+  /* Custom Select */
+  .custom-select {
+    position: relative;
+    width: 140px;
+  }
+
+  .select-trigger {
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
     color: #fff;
-    padding: 0.4rem 0.8rem;
-    border-radius: 6px;
-    outline: none;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+  }
+
+  .select-trigger:hover {
+    background: rgba(255,255,255,0.08);
+  }
+
+  .select-trigger i {
+    font-size: 0.7rem;
+    transition: transform 0.3s;
+  }
+
+  .select-trigger.open i {
+    transform: rotate(180deg);
+  }
+
+  .select-options {
+    position: absolute;
+    top: calc(100% + 0.3rem);
+    left: 0;
+    right: 0;
+    background: rgba(10,14,39,0.98);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .select-options.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  .select-option {
+    padding: 0.6rem 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .select-option:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .select-option.selected {
+    background: rgba(91,157,255,0.2);
+    color: #5b9dff;
+  }
+
+  /* Custom Checkbox */
+  .custom-checkbox {
+    position: relative;
+    width: 44px;
+    height: 24px;
     cursor: pointer;
   }
 
-  option {
-    background: #0a0e27;
+  .custom-checkbox input {
+    opacity: 0;
+    width: 0;
+    height: 0;
   }
 
-  input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    accent-color: #5b9dff;
+  .checkbox-slider {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.1);
+    border-radius: 24px;
+    transition: all 0.3s;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .checkbox-slider:before {
+    content: '';
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    top: 2px;
+    background: #fff;
+    border-radius: 50%;
+    transition: all 0.3s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .custom-checkbox input:checked + .checkbox-slider {
+    background: #5b9dff;
+    border-color: #5b9dff;
+  }
+
+  .custom-checkbox input:checked + .checkbox-slider:before {
+    transform: translateX(20px);
   }
 
   .hidden {
@@ -231,20 +342,29 @@
 <div id="settings-panel">
   <div class="setting-item">
     <label>Theme</label>
-    <select id="themeSelect" onchange="changeTheme()">
-      <option value="dark">Dark</option>
-      <option value="blue">Blue</option>
-      <option value="midnight">Midnight</option>
-      <option value="sakura">Sakura Pink</option>
-      <option value="forest">Forest Green</option>
-      <option value="sunset">Sunset Orange</option>
-      <option value="purple">Purple Haze</option>
-      <option value="ocean">Ocean Teal</option>
-    </select>
+    <div class="custom-select">
+      <div class="select-trigger" onclick="toggleSelect()">
+        <span id="selected-theme">Dark</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+      <div class="select-options" id="theme-options">
+        <div class="select-option selected" data-value="dark">Dark</div>
+        <div class="select-option" data-value="blue">Blue</div>
+        <div class="select-option" data-value="midnight">Midnight</div>
+        <div class="select-option" data-value="sakura">Sakura Pink</div>
+        <div class="select-option" data-value="forest">Forest Green</div>
+        <div class="select-option" data-value="sunset">Sunset Orange</div>
+        <div class="select-option" data-value="purple">Purple Haze</div>
+        <div class="select-option" data-value="ocean">Ocean Teal</div>
+      </div>
+    </div>
   </div>
   <div class="setting-item">
-    <label>Confirm Close</label>
-    <input type="checkbox" id="confirmClose" onchange="updateConfirmClose()">
+    <label for="confirmCloseInput">Confirm Close</label>
+    <label class="custom-checkbox">
+      <input type="checkbox" id="confirmCloseInput" onchange="updateConfirmClose()">
+      <span class="checkbox-slider"></span>
+    </label>
   </div>
 </div>
 
@@ -291,15 +411,57 @@ const navbar = document.getElementById("navbar");
 const iframe = document.getElementById("viewer");
 const urlbar = document.getElementById("urlbar");
 const startinput = document.getElementById("startinput");
-const themeSelect = document.getElementById("themeSelect");
 const settingsPanel = document.getElementById("settings-panel");
+const themeOptions = document.getElementById("theme-options");
+const selectTrigger = document.querySelector(".select-trigger");
+const selectedThemeSpan = document.getElementById("selected-theme");
 
 // Theme storage
 let currentTheme = 'dark';
 let confirmClose = false;
 
+function toggleSettings() {
+  if (settingsPanel.classList.contains('show')) {
+    settingsPanel.style.opacity = '0';
+    settingsPanel.style.transform = 'translateY(-10px)';
+    setTimeout(() => {
+      settingsPanel.classList.remove('show');
+      settingsPanel.style.display = 'none';
+    }, 300);
+  } else {
+    settingsPanel.style.display = 'flex';
+    setTimeout(() => {
+      settingsPanel.classList.add('show');
+    }, 10);
+  }
+}
+
+function toggleSelect() {
+  event.stopPropagation();
+  themeOptions.classList.toggle('show');
+  selectTrigger.classList.toggle('open');
+}
+
+// Handle theme selection
+document.querySelectorAll('.select-option').forEach(option => {
+  option.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const value = this.getAttribute('data-value');
+    const text = this.textContent;
+    
+    document.querySelectorAll('.select-option').forEach(opt => opt.classList.remove('selected'));
+    this.classList.add('selected');
+    
+    selectedThemeSpan.textContent = text;
+    currentTheme = value;
+    changeTheme();
+    
+    themeOptions.classList.remove('show');
+    selectTrigger.classList.remove('open');
+  });
+});
+
 function changeTheme() {
-  currentTheme = themeSelect.value;
   const themes = {
     dark: { bg: '#0a0e27', accent: '#5b9dff' },
     blue: { bg: '#001529', accent: '#40a9ff' },
@@ -314,7 +476,13 @@ function changeTheme() {
   const theme = themes[currentTheme];
   document.body.style.background = theme.bg;
   document.querySelector('h1').style.color = theme.accent;
-  document.querySelector('input[type="checkbox"]').style.accentColor = theme.accent;
+  
+  // Update checkbox accent color
+  const checkedInput = document.querySelector('#confirmCloseInput:checked');
+  if (checkedInput) {
+    checkedInput.nextElementSibling.style.background = theme.accent;
+    checkedInput.nextElementSibling.style.borderColor = theme.accent;
+  }
   
   // Update button and shortcut hover colors
   document.querySelectorAll('.shortcut').forEach(el => {
@@ -328,11 +496,7 @@ function changeTheme() {
 }
 
 function updateConfirmClose() {
-  confirmClose = document.getElementById('confirmClose').checked;
-}
-
-function toggleSettings() {
-  settingsPanel.style.display = settingsPanel.style.display === 'flex' ? 'none' : 'flex';
+  confirmClose = document.getElementById('confirmCloseInput').checked;
 }
 
 function navigate() {
@@ -409,7 +573,20 @@ function goHome() {
 // Close settings when clicking outside
 document.addEventListener('click', (e) => {
   if (!e.target.closest('#settings-panel') && !e.target.closest('.settings-btn')) {
-    settingsPanel.style.display = 'none';
+    if (settingsPanel.classList.contains('show')) {
+      settingsPanel.style.opacity = '0';
+      settingsPanel.style.transform = 'translateY(-10px)';
+      setTimeout(() => {
+        settingsPanel.classList.remove('show');
+        settingsPanel.style.display = 'none';
+      }, 300);
+    }
+  }
+  
+  // Close select dropdown when clicking outside
+  if (!e.target.closest('.custom-select')) {
+    themeOptions.classList.remove('show');
+    selectTrigger.classList.remove('open');
   }
 });
 </script>
