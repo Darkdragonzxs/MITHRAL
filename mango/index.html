@@ -498,6 +498,20 @@ function changeTheme() {
 
 function updateConfirmClose() {
   confirmClose = document.getElementById('confirmCloseInput').checked;
+  
+  if (confirmClose) {
+    // Add beforeunload listener when enabled
+    window.addEventListener('beforeunload', handleBeforeUnload);
+  } else {
+    // Remove beforeunload listener when disabled
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+  }
+}
+
+function handleBeforeUnload(e) {
+  e.preventDefault();
+  e.returnValue = ''; // Required for Chrome
+  return ''; // Required for older browsers
 }
 
 function navigate() {
