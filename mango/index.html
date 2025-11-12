@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dashboard</title>
+<title>MITHRAL</title>
 <link rel="icon" href="/mithral.png" type="image/x-icon">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -148,21 +148,25 @@
 </style>
 </head>
 <body>
-  <div id="startpage">
-    <h1>MITHRAL</h1>
+<div id="startpage">
+  <h1 style="display: flex; align-items: center; gap: 0.6rem;">
+    <img src="/mithral.png" alt="Mithral Logo" style="width:40px; height:40px;">
+    MITHRAL
+  </h1>
 
-    <div id="startsearch">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input id="startinput" type="text" placeholder="Search or enter URL..." onkeydown="if(event.key==='Enter') goStart()">
-    </div>
-
-    <div id="shortcuts">
-      <div class="shortcut" onclick="openSite('https://www.inv.nadeko.net')"><i class="fab fa-youtube"></i>YouTube</div>
-      <div class="shortcut" onclick="openSite('https://easyfun.gg/embed/roblox.html')"><i class="fa-solid fa-gamepad"></i>Roblox</div>
-      <div class="shortcut" onclick="openSite('https://wikipedia.org')"><i class="fab fa-wikipedia-w"></i>Wikipedia</div>
-      <div class="shortcut" onclick="openSite('https://search.brave.com')"><i class="fa-solid fa-fire"></i>Brave</div>
-    </div>
+  <div id="startsearch">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input id="startinput" type="text" placeholder="Search or enter URL..." onkeydown="if(event.key==='Enter') goStart()">
   </div>
+
+  <div id="shortcuts">
+    <div class="shortcut" onclick="openSite('https://www.inv.nadeko.net')"><i class="fab fa-youtube"></i>YouTube</div>
+    <div class="shortcut" onclick="openSite('https://easyfun.gg/embed/roblox.html')"><i class="fa-solid fa-gamepad"></i>Roblox</div>
+    <div class="shortcut" onclick="openSite('https://wikipedia.org')"><i class="fab fa-wikipedia-w"></i>Wikipedia</div>
+    <div class="shortcut" onclick="openSite('https://search.brave.com')"><i class="fa-solid fa-fire"></i>Brave</div>
+  </div>
+</div>
+
 
   <iframe id="viewer" src=""></iframe>
 
